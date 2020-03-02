@@ -1,8 +1,7 @@
 import linecache
 import re
-import types
+
 import yaml
-from IPython import embed
 
 
 def flatten_dict(d, prefix=None):
@@ -26,25 +25,27 @@ def flatten_dict(d, prefix=None):
             ret["__".join(prefix + [k])] = v
     return ret
 
+
 def parse_old_meta(meta):
-    ret = {'description':[]}
+    ret = {'description': []}
 
     for line in meta:
         if '=' in line:
-            k,v = [e.strip() for e in line.split('=')]
+            k, v = [e.strip() for e in line.split('=')]
             ret[k] = v
         elif ':' in line:
-            k,v = [e.strip() for e in line.split(':')]
+            k, v = [e.strip() for e in line.split(':')]
             ret[k] = v
         else:
             ret['description'].append(line.strip())
     ret['description'] = ', '.join(ret['description'])
     return ret
 
+
 def parse_meta(block, filename):
     meta = [linecache.getline(filename, i + 1)[1:] for i in range(block.start, block.end)]
     try:
-        tmp =  yaml.load(''.join(meta))
+        tmp = yaml.load(''.join(meta))
         if type(tmp) == str:
             return parse_old_meta(meta)
         else:
@@ -55,7 +56,6 @@ def parse_meta(block, filename):
             return parse_old_meta(meta)
         else:
             return tmp
-
 
 
 def fix_meta_block(meta):

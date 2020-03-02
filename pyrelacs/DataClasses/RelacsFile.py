@@ -1,12 +1,10 @@
-from collections import defaultdict
 import linecache
-from pprint import pprint
-import types
 import warnings
-import numpy as np
-from collections import namedtuple
 from ast import literal_eval
-from IPython import embed
+from collections import defaultdict
+from collections import namedtuple
+
+import numpy as np
 
 from .KeyLoaders import KeyFactory, parse_key, parse_stimuli_key, parse_ficurve_key
 from .MetaLoaders import parse_meta
@@ -194,7 +192,7 @@ def print_hierarchy(hierarchy, indent='', hlevel=0):
             print(hlevel, indent, 'Meta from %i to %i' % (h.meta.start, h.meta.end))
 
         if isinstance(h.data, list):
-            print_hierarchy(h.data, indent + ' ', hlevel+1)
+            print_hierarchy(h.data, indent + ' ', hlevel + 1)
         elif isinstance(h.data, FileRange):
             print(hlevel, indent, 'Data from %i to %i' % (h.data.start, h.data.end))
         else:
@@ -237,6 +235,7 @@ def get_unique_field(meta, pattern):
         return field[0]
     else:
         return None
+
 
 def get_unique_value(meta, pattern):
     return getattr(meta, get_unique_field(meta, pattern))
@@ -299,6 +298,7 @@ def get_unique_field(meta, pattern):
         return field[0]
     else:
         return None
+
 
 def get_unique_value(meta, pattern):
     return getattr(meta, get_unique_field(meta, pattern))
@@ -395,6 +395,7 @@ class RelacsFile(object):
     def __repr__(self):
         return self.__str__()
 
+
 def _merge_stimspike_trials(blocks, filename):
     ret = []
 
@@ -442,7 +443,8 @@ class SpikeFile(RelacsFile):
             try:
                 data = np.array([float(linecache.getline(self.filename, i + 1)) for i in range(block.start, block.end)])
             except:
-                data = (np.asarray([linecache.getline(self.filename, i + 1).strip().split() for i in range(block.start, block.end)])).astype(np.float)
+                data = (np.asarray([linecache.getline(self.filename, i + 1).strip().split() for i in
+                                    range(block.start, block.end)])).astype(np.float)
 
         if loadkey:
             key = parse_key(key, self.filename)
@@ -451,6 +453,7 @@ class SpikeFile(RelacsFile):
             self.content[item_index] = (meta, key, data)
 
         return meta, key, data
+
 
 class StimuliFile(RelacsFile):
     def __init__(self, filename):
@@ -464,6 +467,7 @@ class StimuliFile(RelacsFile):
             self.content[item_index] = (meta, key, data)
         return meta, key, data
 
+
 class BeatFile(RelacsFile):
     def __init__(self, filename):
         super(BeatFile, self).__init__(filename)
@@ -475,6 +479,7 @@ class BeatFile(RelacsFile):
         if replace:
             self.content[item_index] = (meta, key, data)
         return meta, key, data
+
 
 class TraceFile(RelacsFile):
     def __init__(self, filename):
@@ -500,6 +505,7 @@ class EventFile(RelacsFile):
             self.content[item_index] = (meta, key, data)
         return meta, key, data
 
+
 class FICurveFile(StimuliFile):
     def __init__(self, filename):
         super(FICurveFile, self).__init__(filename)
@@ -511,6 +517,7 @@ class FICurveFile(StimuliFile):
         if replace:
             self.content[item_index] = (meta, key, data)
         return meta, key, data
+
 
 def read_info_file(file_name):
     """
